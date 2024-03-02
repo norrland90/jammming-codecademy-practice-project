@@ -1,0 +1,16 @@
+/* HEADER */
+
+.header {
+  background-color: #4c061d;
+  padding: 2rem 0;
+  color: #fff;
+  text-align: center;
+}
+
+.header__heading {
+  font-size: 3rem;
+}
+
+.header__heading--accent {
+  color: #d17a22;
+}

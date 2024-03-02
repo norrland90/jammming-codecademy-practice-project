@@ -1,0 +1,15 @@
+.btn__add-remove-track {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0184ac;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 0;
+  color: #4c061d;
+  border-radius: 2px;
+}
+
+.btn__add-remove-track:hover {
+  background: #018eb9;
+}
