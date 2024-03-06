@@ -17,6 +17,7 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.env
 
 npm-debug.log*
 yarn-debug.log*
@@ -27,4 +28,5 @@ README-template.md
 README.md
 indextest.html
 styletest.css
+apirelaterat.js
 

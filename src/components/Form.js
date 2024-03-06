@@ -9,8 +9,12 @@ function Form() {
     setInput(target.value);
   }
 
+  function handleSubmit(e) {
+    e.preventDefault();
+  }
+
   return (
-    <form className={styles.form}>
+    <form className={styles.form} onSubmit={handleSubmit}>
       <input
         type="text"
         className={styles.form__input}
