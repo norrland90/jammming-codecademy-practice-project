@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { savePlaylist, addItemsToPlaylist } from './utils/Spotify';
 import './App.css';
 import Header from './components/Header';
