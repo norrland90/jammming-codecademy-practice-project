@@ -1,7 +1,3 @@
-// How I want it to work:
-// On search - redirect to login, if alrealy logged in, just search.
-// For that, I need to have a search function that is run, that function have to check for a token? Else redirect to login. Then continue the search.
-
 /**
  * This is an example of a basic node.js script that performs
  * the Authorization Code with PKCE oAuth2 flow to authenticate
@@ -67,25 +63,10 @@ export async function onLoad() {
   // If we have a token, we're logged in, so fetch user data and render logged in template
   if (currentToken.access_token) {
     checkExpiredToken();
-    // console.log(
-    //   `Logged in. Token expire data is checked and refreshed if needed`
-    // );
-    // return true;
-    // const userData = await getUserData();
-    // console.log(userData);
-    // const searchResults = await getSearchResults();
-    // console.log(searchResults);
-    // savePlaylist(userData.id);
-    // renderTemplate('main', 'logged-in-template', userData);
-    // renderTemplate('oauth', 'oauth-template', currentToken);
   }
 
   // Otherwise we're not logged in, so render the login template
   if (!currentToken.access_token) {
-    // renderTemplate('main', 'login');
-    // console.log('no token, need login');
-    // redirectToSpotifyAuthorize();
-    // return false;
   }
 }
 
@@ -243,63 +224,6 @@ function createTrackUris(arrayOfTracks) {
   };
   return trackUris;
 }
-
-// Click handlers
-async function loginWithSpotifyClick() {
-  await redirectToSpotifyAuthorize();
-}
-
-async function logoutClick() {
-  localStorage.clear();
-  window.location.href = redirectUrl;
-}
-
-async function refreshTokenClick() {
-  const token = await refreshToken();
-  currentToken.save(token);
-  // renderTemplate('oauth', 'oauth-template', currentToken);
-}
-
-// HTML Template Rendering with basic data binding - demoware only.
-// function renderTemplate(targetId, templateId, data = null) {
-//   const template = document.getElementById(templateId);
-//   const clone = template.content.cloneNode(true);
-
-//   const elements = clone.querySelectorAll('*');
-//   elements.forEach((ele) => {
-//     const bindingAttrs = [...ele.attributes].filter((a) =>
-//       a.name.startsWith('data-bind')
-//     );
-
-//     bindingAttrs.forEach((attr) => {
-//       const target = attr.name
-//         .replace(/data-bind-/, '')
-//         .replace(/data-bind/, '');
-//       const targetType = target.startsWith('onclick') ? 'HANDLER' : 'PROPERTY';
-//       const targetProp = target === '' ? 'innerHTML' : target;
-
-//       const prefix = targetType === 'PROPERTY' ? 'data.' : '';
-//       const expression = prefix + attr.value.replace(/;\n\r\n/g, '');
-
-//       // Maybe use a framework with more validation here ;)
-//       try {
-//         ele[targetProp] =
-//           targetType === 'PROPERTY'
-//             ? eval(expression)
-//             : () => {
-//                 eval(expression);
-//               };
-//         ele.removeAttribute(attr.name);
-//       } catch (ex) {
-//         console.error(`Error binding ${expression} to ${targetProp}`, ex);
-//       }
-//     });
-//   });
-
-//   const target = document.getElementById(targetId);
-//   target.innerHTML = '';
-//   target.appendChild(clone);
-// }
 
 // THIS WORKS TOO, BUT SEEMS TO BE THE IMPLICIT GRANT - NOT RECOMMENDED
 // SHOULD TRY THE RECOMMENDED Authorization Code with PKCE Flow before continuing, because probably better than this.
