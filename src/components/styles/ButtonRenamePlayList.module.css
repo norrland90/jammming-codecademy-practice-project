@@ -1,0 +1,12 @@
+.btn__rename-playlist {
+  background: #0184ac;
+  border: 0;
+  padding: 0.25em 0.5em;
+  color: #4c061d;
+  border-radius: 10px;
+  font-size: 0.875rem;
+}
+
+.btn__rename-playlist:hover {
+  background: #018eb9;
+}

@@ -1,7 +1,3 @@
-// How I want it to work:
-// On search - redirect to login, if alrealy logged in, just search.
-// For that, I need to have a search function that is run, that function have to check for a token? Else redirect to login. Then continue the search.
-
 /**
  * This is an example of a basic node.js script that performs
  * the Authorization Code with PKCE oAuth2 flow to authenticate
@@ -11,8 +7,8 @@
  * https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow
  */
 
-const clientId = '5c7d35ae3d6a4499b71aa6a7305d7143'; // your clientId
-const redirectUrl = 'http://localhost:3000/'; // your redirect URL - must be localhost URL and/or HTTPS
+const clientId = '6fb630f8af574e34a9866379335a2bb7'; // your clientId
+const redirectUrl = 'http://localhost:3001/'; // your redirect URL - must be localhost URL and/or HTTPS
 
 const authorizationEndpoint = 'https://accounts.spotify.com/authorize';
 const tokenEndpoint = 'https://accounts.spotify.com/api/token';
@@ -46,12 +42,25 @@ const currentToken = {
   },
 };
 
-export async function onLoad() {
+async function main() {
+  // Check for need to refresh on page load
+  if (currentToken.access_token) {
+    const currentTimestamp = Date.now();
+    const expireTimestamp = Date.parse(currentToken.expires);
+    console.log('Current: ' + expireTimestamp);
+    if (currentTimestamp > expireTimestamp) {
+      const token = await refreshToken();
+      currentToken.save(token);
+      console.log('do I see this?');
+    }
+  }
+
   // On page load, try to fetch auth code from current browser search URL
-  let args = new URLSearchParams(window.location.search);
-  let code = args.get('code');
+  const args = new URLSearchParams(window.location.search);
+  const code = args.get('code');
 
   // If we find a code, we're in a callback, do a token exchange
+
   if (code) {
     const token = await getToken(code);
     currentToken.save(token);
@@ -66,15 +75,11 @@ export async function onLoad() {
 
   // If we have a token, we're logged in, so fetch user data and render logged in template
   if (currentToken.access_token) {
-    checkExpiredToken();
-    // console.log(
-    //   `Logged in. Token expire data is checked and refreshed if needed`
-    // );
-    // return true;
-    // const userData = await getUserData();
-    // console.log(userData);
-    // const searchResults = await getSearchResults();
-    // console.log(searchResults);
+    console.log(`Logged in. Token: ${currentToken.access_token}`);
+    const userData = await getUserData();
+    console.log(userData);
+    const searchResults = await getSearchResults();
+    console.log(searchResults);
     // savePlaylist(userData.id);
     // renderTemplate('main', 'logged-in-template', userData);
     // renderTemplate('oauth', 'oauth-template', currentToken);
@@ -83,26 +88,14 @@ export async function onLoad() {
   // Otherwise we're not logged in, so render the login template
   if (!currentToken.access_token) {
     // renderTemplate('main', 'login');
-    // console.log('no token, need login');
-    // redirectToSpotifyAuthorize();
-    // return false;
+    console.log('no token, need login');
+    redirectToSpotifyAuthorize();
   }
 }
 
-onLoad();
+main();
 
-// Check for need to refresh token on page load - if so, run refreshToken function.
-// May need to run on all API calls.
-async function checkExpiredToken() {
-  const currentTimestamp = Date.now();
-  const expireTimestamp = Date.parse(currentToken.expires);
-  if (currentTimestamp > expireTimestamp) {
-    const token = await refreshToken();
-    currentToken.save(token);
-  }
-}
-
-export async function redirectToSpotifyAuthorize() {
+async function redirectToSpotifyAuthorize() {
   const possible =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const randomValues = crypto.getRandomValues(new Uint8Array(64));
@@ -138,29 +131,25 @@ export async function redirectToSpotifyAuthorize() {
   window.location.href = authUrl.toString(); // Redirect the user to the authorization server for login
 }
 
-// Spotify API Calls
+// Soptify API Calls
 async function getToken(code) {
-  console.log('getToken run');
   const code_verifier = localStorage.getItem('code_verifier');
 
-  try {
-    const response = await fetch(tokenEndpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        client_id: clientId,
-        grant_type: 'authorization_code',
-        code: code,
-        redirect_uri: redirectUrl,
-        code_verifier: code_verifier,
-      }),
-    });
-    return await response.json();
-  } catch (error) {
-    console.log(error);
-  }
+  const response = await fetch(tokenEndpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      client_id: clientId,
+      grant_type: 'authorization_code',
+      code: code,
+      redirect_uri: redirectUrl,
+      code_verifier: code_verifier,
+    }),
+  });
+
+  return await response.json();
 }
 
 async function refreshToken() {
@@ -188,11 +177,11 @@ async function getUserData() {
   return await response.json();
 }
 
-export async function getSearchResults(query) {
+async function getSearchResults() {
   const q = 'kort+biografi+med+litet+testamente';
   const type = 'track';
   const response = await fetch(
-    `https://api.spotify.com/v1/search?q=${query}&type=${type}`,
+    `https://api.spotify.com/v1/search?q=${q}&type=${type}`,
     {
       method: 'GET',
       headers: { Authorization: 'Bearer ' + currentToken.access_token },

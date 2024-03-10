@@ -27,7 +27,14 @@ body {
 
 .results-playlist__heading {
   font-size: 2rem;
-  margin-bottom: 2rem;
-  line-height: 1.6;
+}
+
+.results-playlist__heading-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 1);
+  padding-bottom: 0.5rem;
+  margin-bottom: 2rem;
 }

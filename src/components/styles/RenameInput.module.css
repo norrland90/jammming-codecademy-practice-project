@@ -1,0 +1,32 @@
+.rename__form {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.rename__input {
+  border: 0;
+  background: 0;
+  height: 100%;
+  width: 100%;
+  color: white;
+  font-size: 2rem;
+}
+
+.rename__input:focus {
+  outline: 0;
+  border-radius: 5px;
+}
+
+.btn__rename-playlist {
+  background: #0184ac;
+  border: 0;
+  padding: 0.25em 0.5em;
+  color: #4c061d;
+  border-radius: 10px;
+  font-size: 0.875rem;
+}
+
+.btn__rename-playlist:hover {
+  background: #018eb9;
+}
