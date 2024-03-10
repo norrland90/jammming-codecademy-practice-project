@@ -38,3 +38,8 @@ body {
   padding-bottom: 0.5rem;
   margin-bottom: 2rem;
 }
+
+.results__no-results {
+  font-style: italic;
+  margin-bottom: 2rem;
+}

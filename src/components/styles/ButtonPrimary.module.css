@@ -5,10 +5,10 @@
   width: max-content;
   margin: 0 auto;
   background: #4c061d;
-  padding: 1em 2em;
+  padding: 0.8em 1.25em;
   border: 0;
   border-radius: 99999px;
-  color: white;
+  color: rgba(255, 255, 255, 1);
   text-transform: uppercase;
   letter-spacing: 1px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
@@ -24,4 +24,32 @@
 
 .btn__primary--save:hover {
   background: #018eb9;
+}
+
+.btn__primary.blink {
+  animation: blinkAnimation;
+  animation-duration: 1500ms;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 1;
+}
+
+@keyframes blinkAnimation {
+  0% {
+    color: rgba(255, 255, 255, 1);
+  }
+  40% {
+    color: rgba(255, 255, 255, 1);
+  }
+  60% {
+    color: rgba(255, 255, 255, 0);
+  }
+  70% {
+    color: rgba(255, 255, 255, 1);
+  }
+  90% {
+    color: rgba(255, 255, 255, 0);
+  }
+  100% {
+    color: rgba(255, 255, 255, 1);
+  }
 }

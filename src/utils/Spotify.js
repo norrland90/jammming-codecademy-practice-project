@@ -140,7 +140,6 @@ export async function redirectToSpotifyAuthorize() {
 
 // Spotify API Calls
 async function getToken(code) {
-  console.log('getToken run');
   const code_verifier = localStorage.getItem('code_verifier');
 
   try {
@@ -189,7 +188,6 @@ async function getUserData() {
 }
 
 export async function getSearchResults(query) {
-  const q = 'kort+biografi+med+litet+testamente';
   const type = 'track';
   const response = await fetch(
     `https://api.spotify.com/v1/search?q=${query}&type=${type}`,
@@ -202,18 +200,48 @@ export async function getSearchResults(query) {
   return await response.json();
 }
 
-async function savePlaylist(userId) {
+export async function savePlaylist(name) {
+  // Get user ID
+  const data = await getUserData();
+  const userId = data.id;
+
   const response = await fetch(
     `https://api.spotify.com/v1/users/${userId}/playlists`,
     {
       method: 'POST',
       headers: { Authorization: 'Bearer ' + currentToken.access_token },
-      body: JSON.stringify({ name: 'TestPlayListFromApp', public: false }),
+      body: JSON.stringify({ name: name, public: false }),
+    }
+  );
+  const playlistData = await response.json();
+  const playlistId = playlistData.id;
+  return [playlistId, userId];
+}
+
+export async function addItemsToPlaylist(userId, playlistId, arrayOfTracks) {
+  const trackUris = createTrackUris(arrayOfTracks);
+  const response = await fetch(
+    `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + currentToken.access_token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(trackUris),
     }
   );
 
-  const data = await response.json();
-  console.log(data);
+  return await response.json();
+}
+
+function createTrackUris(arrayOfTracks) {
+  const trackUris = {
+    uris: arrayOfTracks.map((track) => {
+      return `spotify:track:${track.id}`;
+    }),
+  };
+  return trackUris;
 }
 
 // Click handlers

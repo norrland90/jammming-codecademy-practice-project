@@ -3,7 +3,7 @@ import ButtonPrimary from './ButtonPrimary';
 import styles from './styles/Form.module.css';
 import { redirectToSpotifyAuthorize, getSearchResults } from '../utils/Spotify';
 
-function Form({ loggedIn, trackList, setTrackList }) {
+function Form({ loggedIn, trackList, setTrackList, setLoading }) {
   const [input, setInput] = useState('');
 
   function handleInput({ target }) {
@@ -15,10 +15,15 @@ function Form({ loggedIn, trackList, setTrackList }) {
     if (!loggedIn) {
       redirectToSpotifyAuthorize();
     } else {
-      getSearchResults(input).then((data) => {
-        setTrackList(data.tracks.items);
-        console.log(trackList);
-      });
+      setLoading(true);
+      if (input) {
+        getSearchResults(input).then((data) => {
+          setTrackList(data.tracks.items);
+        });
+      } else {
+        alert('Please add search term');
+      }
+      setLoading(false);
     }
   }
 
@@ -27,7 +32,7 @@ function Form({ loggedIn, trackList, setTrackList }) {
       <input
         type="text"
         className={styles.form__input}
-        placeholder="Enter song, album or artist"
+        placeholder="Enter song name"
         id="search"
         onChange={handleInput}
         value={input}

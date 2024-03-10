@@ -10,3 +10,8 @@
 .btn__rename-playlist:hover {
   background: #018eb9;
 }
+
+.clear {
+  display: block;
+  margin-bottom: 2rem;
+}

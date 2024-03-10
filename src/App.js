@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { savePlaylist, addItemsToPlaylist } from './utils/Spotify';
 import './App.css';
 import Header from './components/Header';
 import Form from './components/Form';
@@ -6,6 +7,7 @@ import Track from './components/Track';
 import ButtonPrimary from './components/ButtonPrimary';
 import ButtonRenamePlayList from './components/ButtonRenamePlayList';
 import RenameInput from './components/RenameInput';
+import ButtonClearList from './components/ButtonClearList';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(null);
@@ -14,7 +16,8 @@ function App() {
   const [playListName, setPlayListName] = useState('New Playlist');
   const [isRenaming, setIsRenaming] = useState(false);
   const [jiggleTrackId, setJiggleTrackId] = useState(null);
-  const inputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   // Workaround to check login status - not good
   useEffect(() => {
@@ -75,6 +78,25 @@ function App() {
     setIsRenaming(false);
   }
 
+  function handleSaveClick() {
+    savePlaylist(playListName).then(([playlistId, userId]) => {
+      addItemsToPlaylist(userId, playlistId, playList).then((data) => {
+        showSuccessMessage();
+      });
+    });
+  }
+
+  function showSuccessMessage() {
+    setSuccess(true);
+    setTimeout(() => {
+      setSuccess(false);
+    }, 2000);
+  }
+
+  function handleClearClick() {
+    setPlayList([]);
+  }
+
   return (
     <>
       <Header />
@@ -83,6 +105,7 @@ function App() {
           loggedIn={loggedIn}
           trackList={trackList}
           setTrackList={setTrackList}
+          setLoading={setLoading}
         />
       </main>
       <div className="results-container container">
@@ -90,17 +113,23 @@ function App() {
           <div className="results-playlist__heading-container">
             <h2 className="results-playlist__heading">Results</h2>
           </div>
-          {trackList.map((track) => {
-            return (
-              <Track
-                list="results"
-                track={track}
-                key={track.id}
-                onAction={addTrackToPlayList}
-                jiggleTrackId={jiggleTrackId}
-              />
-            );
-          })}
+          {loading ? (
+            <p className="results__no-results">Loading...</p>
+          ) : trackList.length > 0 ? (
+            trackList.map((track) => {
+              return (
+                <Track
+                  list="results"
+                  track={track}
+                  key={track.id}
+                  onAction={addTrackToPlayList}
+                  jiggleTrackId={jiggleTrackId}
+                />
+              );
+            })
+          ) : (
+            <p className="results__no-results">The list is empty</p>
+          )}
         </section>
         <section className="results-playlist-box">
           <div className="results-playlist__heading-container">
@@ -114,18 +143,30 @@ function App() {
               text={isRenaming ? 'Cancel' : 'Rename'}
             />
           </div>
-          {playList.map((track) => {
-            return (
-              <Track
-                list="playlist"
-                track={track}
-                key={track.id}
-                onAction={removeTrackFromPlayList}
-                jiggleTrackId={jiggleTrackId}
-              />
-            );
-          })}
-          <ButtonPrimary type="save" text="Save playlist" />
+          {playList.length > 0 ? (
+            playList.map((track) => {
+              return (
+                <Track
+                  list="playlist"
+                  track={track}
+                  key={track.id}
+                  onAction={removeTrackFromPlayList}
+                  jiggleTrackId={jiggleTrackId}
+                />
+              );
+            })
+          ) : (
+            <p className="results__no-results">The list is empty</p>
+          )}
+          {playList.length > 0 && (
+            <ButtonClearList onClick={handleClearClick} text="Clear list" />
+          )}
+          <ButtonPrimary
+            type="save"
+            text={success ? 'Playlist saved!' : 'Save playlist'}
+            onClick={handleSaveClick}
+            blinkClass={success ? 'blink' : ''}
+          />
         </section>
       </div>
     </>
