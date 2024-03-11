@@ -16,8 +16,20 @@
   gap: 1rem;
 }
 
+.track__preview {
+  position: relative;
+  width: 3rem;
+  height: 3rem;
+
+  /* Center preview button */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .track__img {
-  width: 3em;
+  position: absolute;
+  width: 100%;
   aspect-ratio: 1/1;
 }
 
